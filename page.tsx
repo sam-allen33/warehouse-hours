@@ -1,8 +1,0 @@
-'use client';
-import { useEffect, useState } from 'react';
-export default function Admin(){
-  const [segments,setSegments]=useState<any[]>([]);
-  const [days,setDays]=useState(14);
-  async function load(){ const r=await fetch(`/api/admin/segments?days=${days}`); if(r.ok) setSegments((await r.json()).segments); else alert('Not authorized'); }
-  useEffect(()=>{ load(); },[days]);
-  return (<main className="max-w-4xl mx-auto p-6"><h1 className="text-2xl font-semibold mb-4">Admin Dashboard</h1><div className="flex gap-3 items-center mb-4"><label>Days:</label><input type="number" className="border p-2 rounded w-24" value={days} onChange={e=>setDays(Number(e.target.value))}/><button onClick={load} className="bg-black text-white rounded px-4 py-2">Refresh</button><a className="ml-auto underline" href={`/api/export/week?start=${new Date().toISOString().slice(0,10)}`}>Export CSV (this week)</a></div><div className="overflow-x-auto"><table className="min-w-full text-sm"><thead><tr><th className="text-left p-2">Employee</th><th className="text-left p-2">Customer</th><th className="text-left p-2">Function</th><th className="text-left p-2">Start</th><th className="text-left p-2">End</th><th className="text-left p-2">Break?</th><th className="text-left p-2">Note</th></tr></thead><tbody>{segments.map(s=>(<tr key={s.id} className="border-t"><td className="p-2">{s.full_name}</td><td className="p-2">{s.customer_name}</td><td className="p-2">{s.function_name}</td><td className="p-2">{new Date(s.started_at).toLocaleString()}</td><td className="p-2">{s.ended_at?new Date(s.ended_at).toLocaleString():'—'}</td><td className="p-2">{s.is_break?'Yes':'No'}</td><td className="p-2">{s.note||''}</td></tr>))}</tbody></table></div></main>);}
